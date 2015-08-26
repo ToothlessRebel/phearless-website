@@ -1,0 +1,51 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>{% block title %}[PNUS] Deep In Your Holes{% endblock %}</title>
+        {% block css %}
+            <link
+                href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.0/semantic.css"
+                rel="stylesheet" type="text/css">
+            <link href="{% static "main/css/menu.css" %}" rel="stylesheet" type="text/css">
+        {% endblock %}
+    </head>
+    <body>
+        <div class="ui grid container">
+            <div class="row">
+                <div class="column">
+                <div class="header_bar ui equal width grid">
+                    <div class="row">
+                        {% block header %}
+                            <div class="column">
+                                <span class="text">{{ page_title }}</span><div class="ui text compact menu"></div>
+                            </div>
+                            <div class="right aligned column">
+                                <span class="text">{{ user_name }}</span>
+                                {% include 'main/menu.html' %}
+                            </div>
+                        {% endblock %}
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="content row">
+                <div class="column">
+                    {% block content %}
+
+                    {% endblock %}
+                <div>
+            </div>
+
+            {% block scripts %}
+                <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+                <script src="{% static 'main/js/jquery.cookie.js' %}"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.0/semantic.min.js"></script>
+                <script src="{% static 'main/js/base.js' %}"
+                <script src="{% static "main/js/menu.js" %}"></script>
+            {% endblock %}
+        <div>
+    </body>
+</html>

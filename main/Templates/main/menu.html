@@ -1,0 +1,21 @@
+<div class="ui compact text menu">
+    {% if user_logged_in %}
+        <a class="browse item">
+            <i class="user icon"></i>
+            My Profile
+            <i class="dropdown icon"></i>
+        </a>
+        <div class="ui popup">
+            <div class="ui link list">
+                <a class="item">Settings</a>
+                <a class="item" href="/logout">Log Out</a>
+            </div>
+        </div>
+    {% else %}
+        <a class="item" href="/login">Log In</a>
+    {% endif %}
+    <a class="item"><i class="money icon"></i>Loot Tracker</a>
+    <a class="item" href="https://zkillboard.com/corporation/98055539/" target="_blank">
+        <i class="bullseye icon"></i>Killboard
+    </a>
+</div>

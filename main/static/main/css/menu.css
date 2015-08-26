@@ -1,0 +1,10 @@
+.header_bar .text
+{
+    vertical-align: middle;
+}
+
+.ui.form .row
+{
+    padding: 1rem 0;
+    margin: 0;
+}

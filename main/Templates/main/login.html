@@ -1,0 +1,157 @@
+{% extends 'main/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="ui equal width grid">
+        <div class="centered row">
+            <form action="/login/" method="post">
+                {% csrf_token %}
+                <div class="ui equal width padded centered grid">
+                    <div class="ui inline icon input row">
+                        <label class="three wide right aligned middle aligned column">Username</label>
+                        <input
+                                {% if failed > 5 %}
+                                    disabled
+                                {% endif %}
+                                    class="five wide column"
+                                    type="text"
+                                    placeholder="Enter your username"
+                                    name="username"
+                                >
+                    </div>
+                    <div class="ui inline icon input row">
+                        <label class="three wide right aligned middle aligned column">Password</label>
+                        <input
+                                {% if failed > 5 %}
+                                    disabled
+                                {% endif %}
+                                    class="five wide column"
+                                    type="password"
+                                    placeholder="Enter your password"
+                                    name="password"
+                                >
+                    </div>
+                    {% if failed > 5 %}
+                        <div class="centered row">
+                            <div class="ui warning message six wide column">
+                                <div class="content">
+                                    You will not be able to log in due to having too many failed attempts. Please
+                                    wait a while before trying again.
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if failed < 5 %}
+                        <div class="centered row">
+                            <div class="ui error message six wide column">
+                                <div class="content">
+                                    The username and password provided do not match. Please try again.
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="centered row">
+                        <button class="ui positive button three wide center aligned column" type="submit">Log In
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="centered row">
+            <div class="eight wide column">
+                <div class="ui horizontal divider">
+                    or
+                </div>
+            </div>
+        </div>
+
+        <div class="centered row">
+            <form action="/signup/" method="post">
+                {% csrf_token %}
+                <div class="ui equal width padded centered grid">
+
+                    <div class="row">
+                        <label class="three wide right aligned middle aligned column">
+                            Username
+                        </label>
+
+                        <div class="ui inline icon input">
+                            <input class="five wide column choose-username" type="text" placeholder="Choose a username">
+                            <i class="ui icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="three wide right aligned middle aligned column">Password</label>
+
+                        <div class="ui inline icon input">
+                            <input class="five wide column " type="password" placeholder="Choose a password">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="three wide right aligned middle aligned column">API Key</label>
+
+                        <div class="ui inline icon input">
+                            <input class="five wide column api-field" type="text" placeholder="Enter API key">
+                            <i class="ui small circular help link icon"></i>
+
+                            <div class="ui flowing popup">
+                                <div class="header">API Information</div>
+                                <div class="content">
+                                    This application requires no specific access.
+                                </div>
+                                <div class="content">
+                                    If you do not have an API key and verification code available you can create one
+                                    with the correct permissions
+                                    <a href="https://community.eveonline.com/support/api-key/CreatePredefined?accessMask=0">
+                                        here
+                                    </a>. No expiry date is required, but should your key expire you will be unable to
+                                    access the application.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="three wide right aligned middle aligned column">API Verification Code</label>
+
+                        <div class="ui inline icon input">
+                            <input class="five wide column api-field" type="text"
+                                   placeholder="Enter API key verification code">
+                            <i class="ui small circular help link icon"></i>
+
+                            <div class="ui flowing popup">
+                                <div class="header">API Information</div>
+                                <div class="content">
+                                    This application requires no specific access.
+                                </div>
+                                <div class="content">
+                                    If you do not have an API key and verification code available you can create one
+                                    with the correct permissions
+                                    <a href="https://community.eveonline.com/support/api-key/CreatePredefined?accessMask=0">
+                                        here
+                                    </a>. No expiry date is required, but should your key expire you will be unable to
+                                    access the application.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="centered row">
+                        <button class="ui positive button center aligned centered two wide column" type="submit">
+                            Sign Up
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static 'main/js/login.js' %}"></script>
+{% endblock %}
