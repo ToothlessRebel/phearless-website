@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 class Item(models.Model):
 	name = models.CharField(max_length=200)
-	eve_id = models.BigIntegerField()
+	eve_id = models.BigIntegerField(unique=True)
 	value = models.BigIntegerField()
 
 	def __str__(self):
@@ -15,7 +15,7 @@ class Item(models.Model):
 
 class Alliance(models.Model):
 	name = models.CharField(max_length=200)
-	eve_id = models.BigIntegerField()
+	eve_id = models.BigIntegerField(unique=True)
 
 	def __str__(self):
 		return self.name
@@ -24,7 +24,7 @@ class Alliance(models.Model):
 class Corporation(models.Model):
 	name = models.CharField(max_length=200)
 	alliance = models.ForeignKey(Alliance)
-	eve_id = models.BigIntegerField()
+	eve_id = models.BigIntegerField(unique=True)
 
 	def __str__(self):
 		return self.name
@@ -33,8 +33,8 @@ class Corporation(models.Model):
 class Character(models.Model):
 	name = models.CharField(max_length=200)
 	corporation = models.ForeignKey(Corporation)
-	eve_id = models.BigIntegerField()
-	user = models.ForeignKey(User)
+	eve_id = models.BigIntegerField(unique=True)
+	user = models.ForeignKey(User, null=True)
 
 	def __str__(self):
 		return self.name

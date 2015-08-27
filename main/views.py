@@ -43,3 +43,7 @@ def login(request):
 			django_login(request, user)
 			view = redirect('/')
 	return view
+
+
+def signup(request):
+	pass

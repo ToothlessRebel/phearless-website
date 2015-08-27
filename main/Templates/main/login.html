@@ -66,7 +66,7 @@
             </div>
         </div>
 
-        <div class="centered row">
+        <div class="centered row signup-form">
             <form action="/signup/" method="post">
                 {% csrf_token %}
                 <div class="ui equal width padded centered grid">
@@ -86,7 +86,7 @@
                         <label class="three wide right aligned middle aligned column">Password</label>
 
                         <div class="ui inline icon input">
-                            <input class="five wide column " type="password" placeholder="Choose a password">
+                            <input class="five wide column password" type="password" placeholder="Choose a password">
                         </div>
                     </div>
 
@@ -94,7 +94,7 @@
                         <label class="three wide right aligned middle aligned column">API Key</label>
 
                         <div class="ui inline icon input">
-                            <input class="five wide column api-field" type="text" placeholder="Enter API key">
+                            <input class="five wide column api-field key" type="text" placeholder="Enter API key">
                             <i class="ui small circular help link icon"></i>
 
                             <div class="ui flowing popup">
@@ -118,7 +118,7 @@
                         <label class="three wide right aligned middle aligned column">API Verification Code</label>
 
                         <div class="ui inline icon input">
-                            <input class="five wide column api-field" type="text"
+                            <input class="five wide column api-field vcode" type="text"
                                    placeholder="Enter API key verification code">
                             <i class="ui small circular help link icon"></i>
 
@@ -140,13 +140,31 @@
                     </div>
 
                     <div class="centered row">
-                        <button class="ui positive button center aligned centered two wide column" type="submit">
+                        <button class="ui positive disabled button center aligned centered two wide column sign-up"
+                                type="submit">
                             Sign Up
                         </button>
+                    </div>
+                    <div class="ui flowing popup">
+                        <div class="content">
+                            All fields are required.
+                        </div>
                     </div>
 
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div class="ui flowing popup username-exists">
+        <div class="content">
+            Username already exists.
+        </div>
+    </div>
+
+    <div class="ui flowing popup api-invalid">
+        <div class="content">
+            API values are not valid.
         </div>
     </div>
 {% endblock %}
