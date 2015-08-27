@@ -4,7 +4,7 @@
 {% block content %}
     <div class="ui equal width grid">
         <div class="centered row">
-            <form action="/login/" method="post">
+            <form action="/user/login/" method="post">
                 {% csrf_token %}
                 <div class="ui equal width padded centered grid">
                     <div class="ui inline icon input row">
@@ -66,8 +66,9 @@
             </div>
         </div>
 
+        {# Sign up form #}
         <div class="centered row signup-form">
-            <form action="/signup/" method="post">
+            <form action="/user/signup/" method="post">
                 {% csrf_token %}
                 <div class="ui equal width padded centered grid">
 
@@ -77,7 +78,8 @@
                         </label>
 
                         <div class="ui inline icon input">
-                            <input class="five wide column choose-username" type="text" placeholder="Choose a username">
+                            <input class="five wide column choose-username" type="text" placeholder="Choose a username"
+                                   name="username">
                             <i class="ui icon"></i>
                         </div>
                     </div>
@@ -86,7 +88,8 @@
                         <label class="three wide right aligned middle aligned column">Password</label>
 
                         <div class="ui inline icon input">
-                            <input class="five wide column password" type="password" placeholder="Choose a password">
+                            <input class="five wide column password" type="password" placeholder="Choose a password"
+                                   name="password">
                         </div>
                     </div>
 
@@ -94,7 +97,8 @@
                         <label class="three wide right aligned middle aligned column">API Key</label>
 
                         <div class="ui inline icon input">
-                            <input class="five wide column api-field key" type="text" placeholder="Enter API key">
+                            <input class="five wide column api-field key" type="text" placeholder="Enter API key"
+                                   name="key">
                             <i class="ui small circular help link icon"></i>
 
                             <div class="ui flowing popup">
@@ -119,7 +123,7 @@
 
                         <div class="ui inline icon input">
                             <input class="five wide column api-field vcode" type="text"
-                                   placeholder="Enter API key verification code">
+                                   placeholder="Enter API key verification code" name="vcode">
                             <i class="ui small circular help link icon"></i>
 
                             <div class="ui flowing popup">
@@ -140,7 +144,7 @@
                     </div>
 
                     <div class="centered row">
-                        <button class="ui positive disabled button center aligned centered two wide column sign-up"
+                        <button class="ui primary disabled button center aligned centered two wide column sign-up"
                                 type="submit">
                             Sign Up
                         </button>

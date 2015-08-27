@@ -73,7 +73,6 @@ def parse_api(request):
 					name=imported['name'],
 					eve_id=imported['id']
 				)
-				pprint(alliance)
 				alliance.save()
 
 		for imported in corporations:
@@ -83,7 +82,6 @@ def parse_api(request):
 					name=imported['name'],
 					alliance=Alliance.objects.get(eve_id=imported['alliance'])
 				)
-				pprint(corporation)
 				corporation.save()
 
 		for imported in characters:
@@ -93,7 +91,6 @@ def parse_api(request):
 					eve_id=imported['id'],
 					corporation=Corporation.objects.get(eve_id=imported['corporation'])
 				)
-				pprint(character)
 				character.save()
 	else:
 		response['result'] = 'error'
