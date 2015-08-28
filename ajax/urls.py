@@ -1,5 +1,3 @@
-__author__ = 'ToothlessRebel'
-
 from . import views
 from django.conf.urls import url
 
