@@ -1,11 +1,22 @@
 from xml.etree.ElementTree import fromstring
 from xml.parsers.expat import ExpatError
+
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
+
 from pprint import pprint
+from collections import namedtuple
+import requests
 import json
 
 from lootTracker.models import Alliance, Character, Corporation
+
+struct = namedtuple("SIZE_SUFFIX", 'ALLIANCE CHARACTER CORPORATION')
+SIZE_SUFFIXES = struct(ALLIANCE='_128.png', CHARACTER='_512.jpg', CORPORATION='_256.png')
+
+IMG_SERVER_URL = 'https://image.eveonline.com/'
 
 # Create your views here.
 
@@ -73,6 +84,14 @@ def parse_api(request):
 					name=imported['name'],
 					eve_id=imported['id']
 				)
+				request = requests.get(IMG_SERVER_URL + '/Alliance/' + str(alliance.eve_id) + SIZE_SUFFIXES.ALLIANCE)
+				if request.status_code == requests.codes.ok:
+					temp_img = NamedTemporaryFile()
+					for block in request.iter_content(1024 * 8):
+						if not block:
+							break  # EOF
+						temp_img.write(block)
+					alliance.portrait.save(str(alliance.eve_id) + '_256.png', File(temp_img))
 				alliance.save()
 
 		for imported in corporations:
@@ -82,6 +101,14 @@ def parse_api(request):
 					name=imported['name'],
 					alliance=Alliance.objects.get(eve_id=imported['alliance'])
 				)
+				request = requests.get(IMG_SERVER_URL + '/Corporation/' + str(corporation.eve_id) + SIZE_SUFFIXES.CORPORATION)
+				if request.status_code == requests.codes.ok:
+					temp_img = NamedTemporaryFile()
+					for block in request.iter_content(1024 * 8):
+						if not block:
+							break  # EOF
+						temp_img.write(block)
+					corporation.portrait.save(str(corporation.eve_id) + '_256.png', File(temp_img))
 				corporation.save()
 
 		for imported in characters:
@@ -91,6 +118,14 @@ def parse_api(request):
 					eve_id=imported['id'],
 					corporation=Corporation.objects.get(eve_id=imported['corporation'])
 				)
+				request = requests.get(IMG_SERVER_URL + '/Character/' + str(character.eve_id) + SIZE_SUFFIXES.CHARACTER, stream=True)
+				if request.status_code == requests.codes.ok:
+					temp_img = NamedTemporaryFile()
+					for block in request.iter_content(1024 * 8):
+						if not block:
+							break  # EOF
+						temp_img.write(block)
+					character.portrait.save(str(character.eve_id) + '_256.jpg', File(temp_img))
 				character.save()
 	else:
 		response['result'] = 'error'

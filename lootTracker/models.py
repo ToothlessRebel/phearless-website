@@ -16,6 +16,7 @@ class Item(models.Model):
 class Alliance(models.Model):
 	name = models.CharField(max_length=200)
 	eve_id = models.BigIntegerField(unique=True)
+	portrait = models.FileField(upload_to='eve/portraits/alliance')
 
 	def __str__(self):
 		return self.name
@@ -25,6 +26,7 @@ class Corporation(models.Model):
 	name = models.CharField(max_length=200)
 	alliance = models.ForeignKey(Alliance)
 	eve_id = models.BigIntegerField(unique=True)
+	portrait = models.FileField(upload_to='eve/portraits/corporation')
 
 	def __str__(self):
 		return self.name
@@ -35,6 +37,7 @@ class Character(models.Model):
 	corporation = models.ForeignKey(Corporation)
 	eve_id = models.BigIntegerField(unique=True)
 	user = models.ForeignKey(User, null=True)
+	portrait = models.FileField(upload_to='eve/portraits/character')
 
 	def __str__(self):
 		return self.name

@@ -6,6 +6,7 @@ $(function () {
     var login = {};
     login.username = false;
     login.api = false;
+    login.parse = false;
 
     $('.help.icon').popup({
         inline: true,
@@ -61,7 +62,7 @@ $(function () {
                 url: 'https://api.eveonline.com/account/APIKeyInfo.xml.aspx?keyID=' + key + '&vCode=' + vcode,
                 dataType: 'text'
             }).always(function () {
-                $inputs.removeClass('loading');
+                $inputs.removeClass('loading red remove');
                 $icons.popup('destroy');
             }).success(function (response) {
                 login.api = true;
@@ -90,12 +91,24 @@ $(function () {
     });
 
     function parse_api(api_data) {
+        $('.button.sign-up').addClass('loading');
         $.ajax({
             url: '/ajax/parse_api/',
             method: 'POST',
             data: {
                 api: api_data
             }
+        }).always(function () {
+            $('.button.sign-up').removeClass('loading');
+        }).success(function (response) {
+            console.log('success', response);
+            if (response.result === 'success') {
+                console.log('allow button');
+                login.parse = true;
+                checkForm();
+            }
+        }).fail(function () {
+            $('.error.message.api-parse-fail').removeClass('hidden');
         });
     }
 
@@ -110,7 +123,7 @@ $(function () {
             }
         });
 
-        if (complete && login.username === true && login.api === true) {
+        if (complete && login.username === true && login.api === true && login.parse === true) {
             $button.removeClass('disabled');
             $button.closest('div').popup('destroy');
         }

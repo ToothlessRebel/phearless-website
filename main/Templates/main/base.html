@@ -22,7 +22,7 @@
                                 <span class="text">{{ page_title }}</span><div class="ui text compact menu"></div>
                             </div>
                             <div class="right aligned column">
-                                <span class="text">{{ user_name }}</span>
+                                <span class="text">{{ request.user.username }}</span>
                                 {% include 'main/menu.html' %}
                             </div>
                         {% endblock %}

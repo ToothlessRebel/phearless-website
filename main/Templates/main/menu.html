@@ -1,5 +1,5 @@
 <div class="ui compact text menu">
-    {% if user_logged_in %}
+    {% if request.user.is_authenticated %}
         <a class="browse item">
             <i class="user icon"></i>
             My Profile
@@ -14,7 +14,7 @@
     {% else %}
         <a class="item" href="/user/login">Log In</a>
     {% endif %}
-    <a class="item"><i class="money icon"></i>Loot Tracker</a>
+    <a class="item" href="/loot/"><i class="money icon"></i>Loot Tracker</a>
     <a class="item" href="https://zkillboard.com/corporation/98055539/" target="_blank">
         <i class="bullseye icon"></i>Killboard
     </a>

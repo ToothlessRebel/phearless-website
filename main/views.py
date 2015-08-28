@@ -4,6 +4,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import login as django_login
 from django.contrib.auth import authenticate
+from django.contrib.auth.decorators import login_required
+
 from django.contrib.auth.models import User
 
 from .models import Api
@@ -15,11 +17,8 @@ PAGE_TITLE = 'Phearless, Naughty and Ugly Scoundrels'
 
 
 def index(request):
-	user_name = request.user.username
 	return render(request, 'main/home.html', {
-		'page_title': PAGE_TITLE,
-		'user_name': user_name,
-		'user_logged_in': request.user.is_authenticated()
+		'page_title': PAGE_TITLE
 	})
 
 
@@ -29,9 +28,10 @@ def logout(request):
 
 
 def login(request):
+	request.session['next'] = request.GET['next'] if 'next' in request.GET else request.session.get('next', '/')
 	if request.method != 'POST':
 		view = render(request, 'main/login.html', {
-			'page_title': PAGE_TITLE
+			'page_title': PAGE_TITLE,
 		})
 	else:
 		# Handle the form.
@@ -44,11 +44,14 @@ def login(request):
 			})
 		else:
 			django_login(request, user)
-			view = redirect('/')
+			view = redirect(request.session.get('next', '/'))
+			request.session.delete('next')
+
 	return view
 
 
 def signup(request):
+	request.session['next'] = request.GET['next'] if 'next' in request.GET else request.session.get('next', '/')
 	if request.method != 'POST':
 		view = render(request, 'main/login.html', {
 			'page_title': PAGE_TITLE
@@ -72,6 +75,25 @@ def signup(request):
 				pprint('Character' + char_id + ' does not exist.')
 
 		django_login(request, user)
-		view = redirect('/')  # @todo This should redirect to character picking.
+		view = redirect('/user/characters')
+
+	return view
+
+
+@login_required
+def pick_characters(request):
+	return render(request, 'main/characters.html', {
+		'page_title': PAGE_TITLE,
+		'characters': request.user.character_set.all()
+	})
+
+
+@login_required
+def set_character(request, character_id):
+	character = Character.objects.filter(pk=character_id).get()
+	request.user.api.default_character = character
+	request.user.save()
+	view = redirect(request.session.get('next', '/'))
+	request.session.delete('next')
 
 	return view

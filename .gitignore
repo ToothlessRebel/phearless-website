@@ -60,4 +60,7 @@ docs/_build/
 # PyBuilder
 target/
 
+# App ignores
+media/*
+
 # Created by .ignore support plugin (hsz.mobi)

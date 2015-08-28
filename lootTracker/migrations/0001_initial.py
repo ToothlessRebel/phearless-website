@@ -15,32 +15,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Alliance',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
                 ('name', models.CharField(max_length=200)),
-                ('eve_id', models.BigIntegerField()),
+                ('eve_id', models.BigIntegerField(unique=True)),
+                ('portrait', models.FileField(upload_to='eve/portraits/alliance')),
             ],
         ),
         migrations.CreateModel(
             name='Character',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
                 ('name', models.CharField(max_length=200)),
-                ('eve_id', models.BigIntegerField()),
+                ('eve_id', models.BigIntegerField(unique=True)),
+                ('portrait', models.FileField(upload_to='eve/portraits/character')),
             ],
         ),
         migrations.CreateModel(
             name='Corporation',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
                 ('name', models.CharField(max_length=200)),
-                ('eve_id', models.BigIntegerField()),
+                ('eve_id', models.BigIntegerField(unique=True)),
+                ('portrait', models.FileField(upload_to='eve/portraits/corporation')),
                 ('alliance', models.ForeignKey(to='lootTracker.Alliance')),
             ],
         ),
         migrations.CreateModel(
             name='Drop',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
                 ('quantity', models.IntegerField()),
                 ('item_current_value', models.BigIntegerField()),
             ],
@@ -48,7 +51,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Fleet',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
                 ('corporation', models.ForeignKey(to='lootTracker.Corporation')),
                 ('members', models.ManyToManyField(to='lootTracker.Character')),
             ],
@@ -56,16 +59,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Item',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
                 ('name', models.CharField(max_length=200)),
-                ('eve_id', models.BigIntegerField()),
+                ('eve_id', models.BigIntegerField(unique=True)),
                 ('value', models.BigIntegerField()),
             ],
         ),
         migrations.CreateModel(
             name='Payment',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
                 ('value', models.BigIntegerField()),
                 ('character', models.ForeignKey(to='lootTracker.Character')),
             ],
@@ -73,8 +76,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Treasury',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(default='', max_length=200)),
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
+                ('name', models.CharField(max_length=200, default='')),
                 ('value', models.BigIntegerField()),
                 ('corporation', models.ForeignKey(to='lootTracker.Corporation')),
             ],
@@ -102,6 +105,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='character',
             name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True),
         ),
     ]
