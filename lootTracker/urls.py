@@ -1,8 +1,8 @@
 __author__ = 'ToothlessRebel'
 
-from django.conf.urls import url
 from . import views
+from django.conf.urls import url
 
 urlpatterns = [
-	url(r'^$', views.index, name='index')
+    url(r'^$', views.index, name='index')
 ]
