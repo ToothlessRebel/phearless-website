@@ -1,0 +1,40 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="ui equal width grid">
+
+        <div class="row">
+            <div class="column">
+                <h1 class="ui header">Please select your default character.</h1>
+
+                <p>When taking actions in actions in the application it will be assumed you using your default
+                    character.</p>
+            </div>
+        </div>
+
+        <div class="centered row">
+            <div class="column">
+                <div class="ui link cards">
+                    {% for character in characters %}
+                        <a class="ui card" href="/user/set_character/{{ character.id }}">
+                            <div class="image">
+                                <img src="{{ character.portrait.url }}">
+                            </div>
+                            <div class="content">
+                                <div class="header">{{ character.name }}</div>
+                                <div class="meta">
+                                    {{ character.corporation.name }}
+                                    {% if character.corporation.alliance.name|length > 0 %}
+                                        <br>{{ character.corporation.alliance.name }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
