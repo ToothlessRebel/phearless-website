@@ -1,0 +1,79 @@
+{% extends 'main/base.html' %}
+{% load staticfiles %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "lootTracker/css/lootTracker.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="ui grid">
+
+        <div class="row">
+            <div class="column">
+                <h1 class="ui header row">Loot Tracking</h1>
+                Enter loot here to use the corporation's shared payout to calculate payouts for the group.
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="three wide column">
+                <h3 class="ui header">Current Fleets</h3>
+            </div>
+            <div class="thirteen wide column">
+                <h3 class="ui header">Loot Registry</h3>
+            </div>
+        </div>
+
+        <div class="top attached middle aligned row">
+            <div class="three wide column">
+                <ul class="ui relaxed link fleet list">
+                    {% for fleet in fleets %}
+                        <a class="item">
+                            <i class="ui {{ fleet.type.icon }} icon"></i>
+
+                            <div class="content">
+                                {{ fleet.type.name }}
+                            </div>
+                        </a>
+                    {% empty %}
+                        No fleets currently open.
+                    {% endfor %}
+                    <div class="item">
+                        <button class="ui primary button">Start Fleet</button>
+                    </div>
+                </ul>
+            </div>
+            <div class="thirteen wide column">
+                <div class="ui thirteen column grid">
+                    <div class="middle aligned row">
+                        <div class="five wide column">
+                            <div class="ui fluid search selection dropdown">
+                                <input type="hidden" name="item_id">
+                                <i class="dropdown icon"></i>
+
+                                <div class="default text">Enter an item</div>
+                                <div class="menu">
+                                    {% for item in items %}
+                                        <div class="item" data-value="{{ item.eve_id }}">{{ item.name }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="three wide column">
+                            <div class="ui center aligned quantity input">
+                                <input type="number" placeholder="Quantity" min="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static "/lootTracker/lootTracker.js" %}"></script>
+{% endblock %}

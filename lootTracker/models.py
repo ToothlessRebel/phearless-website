@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 class Item(models.Model):
     name = models.CharField(max_length=200)
     eve_id = models.BigIntegerField(unique=True)
-    value = models.BigIntegerField()
+    icon = models.FileField(upload_to='eve/portraits/items')
 
     def __str__(self):
         return self.name
@@ -44,9 +44,29 @@ class Character(models.Model):
         return self.name
 
 
+class FleetType(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+    icon = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.type
+
+
+class FleetRestriction(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+
 class Fleet(models.Model):
     corporation = models.ForeignKey(Corporation)
     members = models.ManyToManyField(Character)
+    type = models.ForeignKey(FleetType, null=True)
+    finalized = models.BooleanField(default=False)
+    restriction = models.ForeignKey(FleetRestriction, null=True)
 
     def __str__(self):
         return 'Fleet ' + str(self.id)
