@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+import json
+
 
 # Create your models here.
 
@@ -9,6 +11,15 @@ class Item(models.Model):
     name = models.CharField(max_length=200)
     eve_id = models.BigIntegerField(unique=True)
     icon = models.FileField(upload_to='eve/portraits/items')
+
+    @staticmethod
+    def load_from_json(json_string):
+        properties = json.loads(json_string)
+
+        return Item(
+            name=properties['typeName'],
+            eve_id=properties['typeID']
+        )
 
     def __str__(self):
         return self.name

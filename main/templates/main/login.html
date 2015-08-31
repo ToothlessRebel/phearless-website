@@ -10,7 +10,7 @@
                     <div class="ui inline icon input row">
                         <label class="three wide right aligned middle aligned column">Username</label>
                         <input
-                                {% if failed > 5 %}
+                                {% if failed >= 5 %}
                                     disabled
                                 {% endif %}
                                     class="five wide column"
@@ -22,7 +22,7 @@
                     <div class="ui inline icon input row">
                         <label class="three wide right aligned middle aligned column">Password</label>
                         <input
-                                {% if failed > 5 %}
+                                {% if failed >= 5 %}
                                     disabled
                                 {% endif %}
                                     class="five wide column"

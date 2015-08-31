@@ -16,20 +16,22 @@ $(function () {
 
     item_dropdown.on('change', function () {
         if (item_not_found.length > 0 && !lookup_fired) {
-            // Hit up Fuzzworks to get the ID.
+            item_dropdown.addClass('loading');
             lookup_fired = true;
             $.ajax({
-                url: 'https://www.fuzzwork.co.uk/api/typeid.php',
-                data: {
-                    typename: item_not_found
-                }
+                url: '/ajax/name_to_id/' + item_not_found
             }).always(function () {
+                item_dropdown.removeClass('loading error');
                 lookup_fired = false;
             }).success(function (response) {
                 console.log(response);
-                
+                if (response.typeName === "bad item") {
+                    item_dropdown.addClass('error');
+                } else {
+                    item_dropdown.find('input[name="item_id"]').val(response.typeID)
+                }
             }).error(function () {
-                // @todo
+                item_dropdown.addClass('error');
             });
         }
     });

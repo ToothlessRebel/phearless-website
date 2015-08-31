@@ -1,3 +1,5 @@
+from lootTracker.models import Item
+
 from xml.etree.ElementTree import fromstring
 from xml.parsers.expat import ExpatError
 
@@ -13,8 +15,8 @@ import json
 
 from lootTracker.models import Alliance, Character, Corporation
 
-struct = namedtuple("SIZE_SUFFIX", 'ALLIANCE CHARACTER CORPORATION')
-SIZE_SUFFIXES = struct(ALLIANCE='_128.png', CHARACTER='_512.jpg', CORPORATION='_256.png')
+struct = namedtuple("SIZE_SUFFIX", 'ALLIANCE CHARACTER CORPORATION ITEM')
+SIZE_SUFFIXES = struct(ALLIANCE='_128.png', CHARACTER='_512.jpg', CORPORATION='_256.png', ITEM='_64.png')
 
 IMG_SERVER_URL = 'https://image.eveonline.com/'
 
@@ -134,3 +136,20 @@ def parse_api(request):
         response['result'] = 'error'
 
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def item_name_to_id(request, item_name):
+    item_request = requests.get('http://www.fuzzwork.co.uk/api/typeid.php?typename=' + item_name)
+    if item_request.status_code == requests.codes.ok:
+        item = Item.load_from_json(item_request.content.decode('utf-8'))
+        portrait_request = requests.get(IMG_SERVER_URL + '/Type/' + str(item.eve_id) + SIZE_SUFFIXES.ITEM,
+                                        stream=True)
+        if portrait_request.status_code == requests.codes.ok:
+            temp_img = NamedTemporaryFile()
+            for block in portrait_request.iter_content(1024 * 8):
+                if not block:
+                    break  # EOF
+                temp_img.write(block)
+            item.icon.save(str(item.eve_id) + SIZE_SUFFIXES.ITEM, File(temp_img))
+        item.save()
+        return HttpResponse(item_request.content, content_type="application/json")

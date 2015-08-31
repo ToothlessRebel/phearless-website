@@ -32,16 +32,16 @@ def login(request):
     if request.method != 'POST':
         view = render(request, 'main/login.html', {
             'page_title': PAGE_TITLE,
+            'failed': request.session.get('failed_logins', 0)
         })
     else:
         # Handle the form.
         user = authenticate(username=request.POST['username'], password=request.POST['password'])
         if user is None:
-            if 'failed_logins' in request.session:
-                request.session['failed_logins'] = request.session.get('failed_logins', 0) + 1
+            request.session['failed_logins'] = request.session.get('failed_logins', 0) + 1
             view = render(request, 'main/login.html', {
                 'page_title': PAGE_TITLE,
-                'failed': request.session['failed_logins']
+                'failed': request.session.get('failed_logins', 0)
             })
         else:
             django_login(request, user)
