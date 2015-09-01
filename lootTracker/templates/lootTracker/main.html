@@ -47,6 +47,9 @@
             <div class="thirteen wide column">
                 <div class="ui grid">
                     <div class="middle aligned row">
+                        <div class="ui inverted dimmer">
+                            <div class="ui text loader"></div>
+                        </div>
                         <div class="five wide column">
                             <div class="ui fluid search selection item dropdown">
                                 <input type="hidden" name="item_id">
@@ -54,9 +57,11 @@
 
                                 <div class="default text">Enter an item</div>
                                 <div class="menu">
-                                    <div class="item" data-value="test_item">Test</div>
                                     {% for item in items %}
-                                        <div class="item" data-value="{{ item.eve_id }}">{{ item.name }}</div>
+                                        <div class="item" data-value="{{ item.eve_id }}">
+                                            <img class="option icon" src="{{ item.icon.url }}">
+                                            {{ item.name }}
+                                        </div>
                                     {% endfor %}
                                 </div>
                             </div>
@@ -65,8 +70,19 @@
                             <div class="ui center aligned quantity input">
                                 <input type="number" placeholder="Quantity" min="1">
                             </div>
+                            <input type="hidden" name="fleet" value="1"> {# @todo Really set something. #}
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="top attached row">
+            <div class="three wide column"></div>
+            <div class="thirteen wide column">
+                <div class="loadable ui grid">
+                    {# Will AJAX in a template here to show entries. #}
+                    {% include 'lootTracker/loot_table.html' %}
                 </div>
             </div>
         </div>

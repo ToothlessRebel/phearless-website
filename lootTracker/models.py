@@ -61,7 +61,7 @@ class FleetType(models.Model):
     icon = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.type
+        return self.name
 
 
 class FleetRestriction(models.Model):
@@ -87,7 +87,7 @@ class Drop(models.Model):
     item = models.ForeignKey(Item)
     fleet = models.ForeignKey(Fleet)
     quantity = models.IntegerField()
-    item_current_value = models.BigIntegerField()
+    item_current_value = models.DecimalField(decimal_places=2, max_digits=50)
 
     def __str__(self):
         return 'Drop ' + str(self.id)

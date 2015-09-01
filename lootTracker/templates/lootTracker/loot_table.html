@@ -1,0 +1,38 @@
+<div class="row">
+    <div class="five wide column">
+        <strong>Type</strong>
+    </div>
+    <div class="three wide center aligned column">
+        <strong>Quantity</strong>
+    </div>
+    <div class="three wide center aligned column">
+        <strong>Value</strong>
+    </div>
+    <div class="three wide center aligned column">
+        <strong>Drop Total</strong>
+    </div>
+</div>
+{% for drop in drops %}
+    <div class="row">
+        <div class="five wide column">
+            <img class="option icon" src="{{ drop.item.icon.url }}"> {{ drop.item.name }}
+        </div>
+        <div class="three wide center aligned column">
+            {{ drop.quantity }}
+        </div>
+        <div class="three wide center aligned column">
+            {{ drop.item_current_value }}
+        </div>
+        <div class="three wide center aligned column">
+            {{ drop.total }}
+        </div>
+    </div>
+{% endfor %}
+<div class="row">
+    <div class="eleven wide right aligned column">
+        <strong>Total:</strong>
+    </div>
+    <div class="three wide center aligned column">
+        {{ fleet_total }} ISK
+    </div>
+</div>

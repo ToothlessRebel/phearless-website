@@ -1,4 +1,4 @@
-from lootTracker.models import Item
+from lootTracker.models import Item, Drop, Fleet
 
 from xml.etree.ElementTree import fromstring
 from xml.parsers.expat import ExpatError
@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
+from django.shortcuts import render
 
 from pprint import pprint
 from collections import namedtuple
@@ -151,5 +152,41 @@ def item_name_to_id(request, item_name):
                     break  # EOF
                 temp_img.write(block)
             item.icon.save(str(item.eve_id) + SIZE_SUFFIXES.ITEM, File(temp_img))
-        item.save()
+        if item.name != 'bad item':
+            item.save()
         return HttpResponse(item_request.content, content_type="application/json")
+
+
+def add_drop_to_fleet(request, fleet_id, item_id, quantity):
+    avg_price = 0.0
+    eve_central_response = requests.get('http://api.eve-central.com/api/marketstat?typeid=' + item_id)
+    tree = None
+    fleet_total = 0
+
+    try:
+        tree = fromstring(eve_central_response.content)
+    except ExpatError:
+        pprint('Failed to parse.')
+
+    if tree is not None:
+        avg_price = tree.find('marketstat/type/buy/avg').text
+    else:
+        pprint('FAILED: tree is None.')
+
+    fleet = Fleet.objects.filter(pk=fleet_id).first()
+    drop = Drop(
+        item=Item.objects.filter(eve_id=item_id).first(),
+        quantity=quantity,
+        fleet=fleet,
+        item_current_value=avg_price
+    ).save()
+
+    drops = Drop.objects.filter(fleet=fleet).all()
+    for drop in drops:
+        drop.total = drop.quantity * drop.item_current_value
+        fleet_total += drop.total
+
+    return render(request, 'lootTracker/loot_table.html', {
+        'drops': drops,
+        'fleet_total': fleet_total
+    })
