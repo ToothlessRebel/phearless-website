@@ -45,7 +45,6 @@ $(function () {
             var item = $item_dropdown.find('input[name="item_id"]').val();
             var quantity = $quantity_input.find('input').val();
             var fleet = $('input[name="fleet"]').val();
-            console.log('Item', item, 'Qty', quantity);
             $.ajax({
                 url: '/ajax/add_drop_to_fleet/' + fleet + '/' + item + '/' + quantity
             }).always(function () {
@@ -54,12 +53,39 @@ $(function () {
                 $item_dropdown.dropdown('clear');
                 $item_dropdown.find('input').focus();
                 $quantity_input.find('input').val('');
-                // Load new table
-                $('.loadable').html(response);
+                loadLootTable(fleet);
             }).fail(function (response) {
                 console.log('Something went wrong!', response);
                 $row.find('input').addClass('error');
             });
         }
     });
+
+    $('.link.fleet.list .item').on('click', function () {
+        var $this = $(this);
+        var fleet_id = $this.data('fleet_id');
+
+        $this.closest('.list').find('.green.check.icon').remove();
+        $this.append('<i class="ui green check icon"></i>');
+        $('input[name="fleet"]').val(fleet_id);
+        $.ajax({
+            url: '/ajax/fleet_member_icons/' + fleet_id
+        }).success(function (response) {
+            $('.loadable.members.row').html(response);
+            loadLootTable(fleet_id);
+        }).fail(function (response) {
+            console.log('Something went wrong! ' + response);
+        });
+    });
+
+    function loadLootTable(fleet_id) {
+        $.ajax({
+            url: '/ajax/load_loot_table/' + fleet_id
+        }).success(function (response) {
+            // Load new table
+            $('.loadable.loot').html(response);
+        }).fail(function (response) {
+            console.log('Something went wrong! ' + response);
+        });
+    }
 });

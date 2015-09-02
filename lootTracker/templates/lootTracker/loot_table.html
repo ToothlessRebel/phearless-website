@@ -27,12 +27,26 @@
             {{ drop.total }}
         </div>
     </div>
+{% empty %}
+    <div class="row">
+        <div class="column">
+            No loot drops have been added for this fleet.
+        </div>
+    </div>
 {% endfor %}
+<div class="row">
+    <div class="eleven wide right aligned column">
+        <strong>5% Corporate Tax:</strong>
+    </div>
+    <div class="three wide center aligned column">
+        {{ corp_tax|stringformat:'.2f' }} ISK
+    </div>
+</div>
 <div class="row">
     <div class="eleven wide right aligned column">
         <strong>Total:</strong>
     </div>
     <div class="three wide center aligned column">
-        {{ fleet_total }} ISK
+        {{ fleet_total|stringformat:'.2f' }} ISK
     </div>
 </div>

@@ -161,7 +161,6 @@ def add_drop_to_fleet(request, fleet_id, item_id, quantity):
     avg_price = 0.0
     eve_central_response = requests.get('http://api.eve-central.com/api/marketstat?typeid=' + item_id)
     tree = None
-    fleet_total = 0
 
     try:
         tree = fromstring(eve_central_response.content)
@@ -181,12 +180,31 @@ def add_drop_to_fleet(request, fleet_id, item_id, quantity):
         item_current_value=avg_price
     ).save()
 
-    drops = Drop.objects.filter(fleet=fleet).all()
+    response = {
+        'result': True if drop is not None else False
+    }
+
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def load_loot_table(request, fleet_id):
+    fleet_total = 0
+
+    drops = Drop.objects.filter(fleet=fleet_id).all()
     for drop in drops:
         drop.total = drop.quantity * drop.item_current_value
         fleet_total += drop.total
+    corp_tax = float(fleet_total) * 0.05
 
     return render(request, 'lootTracker/loot_table.html', {
         'drops': drops,
-        'fleet_total': fleet_total
+        'fleet_total': float(fleet_total) - corp_tax,
+        'corp_tax': corp_tax
+    })
+
+
+def fleet_member_icons(request, fleet_id):
+    fleet = Fleet.objects.filter(pk=fleet_id).first()
+    return render(request, 'lootTracker/member_icons.html', {
+        'members': fleet.members.all()
     })

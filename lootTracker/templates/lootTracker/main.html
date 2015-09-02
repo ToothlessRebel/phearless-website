@@ -29,11 +29,11 @@
             <div class="three wide column">
                 <ul class="ui relaxed link fleet list">
                     {% for fleet in fleets %}
-                        <a class="item">
+                        <a class="item" data-fleet_id="{{ fleet.pk }}">
                             <i class="ui {{ fleet.type.icon }} icon"></i>
 
                             <div class="content">
-                                {{ fleet.type.name }}
+                                {{ fleet.type.name }}&nbsp;
                             </div>
                         </a>
                     {% empty %}
@@ -46,7 +46,11 @@
             </div>
             <div class="thirteen wide column">
                 <div class="ui grid">
-                    <div class="middle aligned row">
+                    <div class="members loadable middle aligned top attached row">
+                        {# Will AJAX in the fleet members. #}
+                    </div>
+
+                    <div class="middle aligned top attached row">
                         <div class="ui inverted dimmer">
                             <div class="ui text loader"></div>
                         </div>
@@ -70,7 +74,7 @@
                             <div class="ui center aligned quantity input">
                                 <input type="number" placeholder="Quantity" min="1">
                             </div>
-                            <input type="hidden" name="fleet" value="1"> {# @todo Really set something. #}
+                            <input type="hidden" name="fleet" value="">
                         </div>
                     </div>
                 </div>
@@ -80,9 +84,8 @@
         <div class="top attached row">
             <div class="three wide column"></div>
             <div class="thirteen wide column">
-                <div class="loadable ui grid">
+                <div class="loot loadable ui grid">
                     {# Will AJAX in a template here to show entries. #}
-                    {% include 'lootTracker/loot_table.html' %}
                 </div>
             </div>
         </div>

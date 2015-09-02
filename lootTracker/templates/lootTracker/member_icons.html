@@ -1,0 +1,16 @@
+{# Loads into a UI row. #}
+<div class="member column">
+    <div class="ui mini rounded spaced images">
+        {% for member in members|slice:":10" %}
+            <img class="ui image" src="{{ member.portrait.url }}">
+        {% endfor %}
+        {% if members|length > 10 %}
+            <div class="ui image">
+                <i class="ui huge ellipsis horizontal icon"></i>
+            </div>
+        {% endif %}
+        <div class="ui image">
+            <i class="ui huge green add square icon"></i>
+        </div>
+    </div>
+</div>
