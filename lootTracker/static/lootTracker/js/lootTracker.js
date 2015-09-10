@@ -7,6 +7,9 @@ $(function () {
     var $item_dropdown = $('.item.dropdown');
     var lookup_fired = false;
     var $quantity_input = $('.quantity.input');
+    loadFleets();
+
+    $('.dropdown').dropdown();
 
     $item_dropdown.dropdown({
         allowAdditions: true,
@@ -49,7 +52,7 @@ $(function () {
                 url: '/ajax/add_drop_to_fleet/' + fleet + '/' + item + '/' + quantity
             }).always(function () {
                 $row.dimmer('hide')
-            }).success(function (response) {
+            }).success(function () {
                 $item_dropdown.dropdown('clear');
                 $item_dropdown.find('input').focus();
                 $quantity_input.find('input').val('');
@@ -61,7 +64,7 @@ $(function () {
         }
     });
 
-    $('.link.fleet.list .item').on('click', function () {
+    $('.link.fleet.list').on('click', '.fleet.item', function () {
         var $this = $(this);
         var fleet_id = $this.data('fleet_id');
 
@@ -78,6 +81,19 @@ $(function () {
         });
     });
 
+    $('.start.fleet.modal').modal({
+            closable: false,
+            onApprove: createAndSelectFleet
+        });
+
+    $('.fleet.list').on('click', '.start.fleet.button', function () {
+        $('.start.fleet.modal').modal('show');
+    });
+
+    $('.loadable.loot').on('click', '.finalize.fleet.button', function () {
+        console.log('Saving fleet.');
+    });
+
     function loadLootTable(fleet_id) {
         $.ajax({
             url: '/ajax/load_loot_table/' + fleet_id
@@ -86,6 +102,51 @@ $(function () {
             $('.loadable.loot').html(response);
         }).fail(function (response) {
             console.log('Something went wrong! ' + response);
+        });
+    }
+
+    function loadFleets(click_target) {
+        click_target = click_target || null;
+        $.ajax({
+            url: '/ajax/load_fleets'
+        }).success(function (response) {
+            // Load the fleet list
+            $('.loadable.fleet.list').html(response);
+            if (click_target) {
+                $('.fleet.item[data-fleet_id='+click_target+']').trigger('click');
+            }
+        }).fail(function (response) {
+            console.log('Something went wrong!', response);
+        });
+    }
+
+    function createAndSelectFleet(event) {
+        var $modal = $(event).closest('.modal');
+        var $modal_content = $modal.find('.content');
+        console.log('Modal content:', $modal_content);
+        var members = $modal_content.find('.character.dropdown').dropdown('get value');
+        var $name_input = $modal_content.find('.name.input');
+        var name = $name_input.val();
+        if (! name.length > 0) {
+            name = $name_input.find('input').attr('placeholder');
+        }
+        console.log('Name: ', name);
+        var type = $modal_content.find('.type.dropdown').dropdown('get value');
+        var restriction = $modal_content.find('.restriction.dropdown').dropdown('get value');
+        $.ajax({
+            url: '/ajax/create_fleet',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                members: members,
+                name: name,
+                type: type,
+                restriction: restriction
+            }
+        }).success(function (response) {
+            loadFleets(response.fleet_id);
+        }).fail(function (response) {
+            console.log('Something went wrong!', response)
         });
     }
 });

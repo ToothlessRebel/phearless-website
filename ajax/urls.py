@@ -7,5 +7,7 @@ urlpatterns = [
     url(r'^name_to_id/(?P<item_name>.+?)/?$', views.item_name_to_id),
     url(r'^add_drop_to_fleet/(?P<fleet_id>\d+?)/(?P<item_id>\d+?)/(?P<quantity>\d+?)/?$', views.add_drop_to_fleet),
     url(r'^fleet_member_icons/(?P<fleet_id>\d+?)/?$', views.fleet_member_icons),
-    url(r'^load_loot_table/(?P<fleet_id>\d+?)/?$', views.load_loot_table)
+    url(r'^load_loot_table/(?P<fleet_id>\d+?)/?$', views.load_loot_table),
+    url(r'^load_fleets/?', views.load_fleets),
+    url(r'^create_fleet/?', views.create_fleet)
 ]

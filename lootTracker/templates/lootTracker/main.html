@@ -27,21 +27,8 @@
 
         <div class="top attached middle aligned row">
             <div class="three wide column">
-                <ul class="ui relaxed link fleet list">
-                    {% for fleet in fleets %}
-                        <a class="item" data-fleet_id="{{ fleet.pk }}">
-                            <i class="ui {{ fleet.type.icon }} icon"></i>
-
-                            <div class="content">
-                                {{ fleet.type.name }}&nbsp;
-                            </div>
-                        </a>
-                    {% empty %}
-                        No fleets currently open.
-                    {% endfor %}
-                    <div class="item">
-                        <button class="ui primary button">Start Fleet</button>
-                    </div>
+                <ul class="ui relaxed link loadable fleet list">
+                    {# Will AJAX in the fleet list. #}
                 </ul>
             </div>
             <div class="thirteen wide column">
@@ -91,6 +78,7 @@
         </div>
 
     </div>
+    {% include 'lootTracker/new_fleet_modal.html' %}
 {% endblock %}
 
 {% block scripts %}

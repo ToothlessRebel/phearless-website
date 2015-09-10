@@ -1,0 +1,60 @@
+<div class="ui start fleet modal">
+    <div class="header">
+        Create a New Fleet
+    </div>
+    <div class="content">
+        <div class="ui relaxed list">
+            <div class="item">
+                <div>Members:</div>
+                <div class="ui scrolling fluid multiple search selection character dropdown">
+                    <input type="hidden" name="members" value="{{ request.user.api.default_character.pk }}">
+                    <i class="ui dropdown icon"></i>
+
+                    <div class="default text">Select fleet members</div>
+                    <div class="menu">
+                        {% for character in characters %}
+                            <div class="item" data-value="{{ character.pk }}">
+                                <img class="option icon" src="{{ character.portrait.url }}">
+                                {{ character.name }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ui transparent left icon name input">
+                    <input type="text" placeholder="{{ request.user.api.default_character.name }}'s fleet">
+                    <i class="edit icon"></i>
+                </div>
+                type is
+                <div class="ui inline type dropdown">
+                    <div class="text">{{ types|first|lower }}</div>
+                    <i class="dropdown icon"></i>
+
+                    <div class="menu">
+                        {% for type in types %}
+                            <div class="{% if forloop.first %}active{% endif %} item"
+                                 data-value="{{ type.pk }}">{{ type.name|lower }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                and restricted by
+                <div class="ui inline restriction dropdown">
+                    <div class="text">no restrictions.</div>
+                    <i class="dropdown icon"></i>
+
+                    <div class="menu">
+                        <div class="active item" data-value="">no restrictions.</div>
+                        {% for restriction in restrictions %}
+                            <div class="item" data-value="{{ restriction.pk }}">{{ restriction.name|lower }}.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui negative button">Cancel</div>
+        <div class="ui positive button">Create</div>
+    </div>
+</div>

@@ -78,6 +78,8 @@ class Fleet(models.Model):
     type = models.ForeignKey(FleetType, null=True)
     finalized = models.BooleanField(default=False)
     restriction = models.ForeignKey(FleetRestriction, null=True)
+    parent_fleet = models.ForeignKey('self', null=True, blank=True)
+    name = models.CharField(max_length=250, default='')
 
     def __str__(self):
         return 'Fleet ' + str(self.id)

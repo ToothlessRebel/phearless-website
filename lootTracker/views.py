@@ -1,4 +1,4 @@
-from .models import Fleet, Item, Drop
+from .models import Fleet, Item, Character, FleetType, FleetRestriction
 
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -14,6 +14,8 @@ from pprint import pprint
 def index(request):
     return render(request, 'lootTracker/main.html', {
         'page_title': 'Loot Tracker',
-        'fleets': Fleet.objects.filter(finalized=False).all(),
         'items': Item.objects.all(),
+        'characters': Character.objects.all(),
+        'types': FleetType.objects.all(),
+        'restrictions': FleetRestriction.objects.all()
     })

@@ -1,4 +1,4 @@
-from lootTracker.models import Item, Drop, Fleet
+from lootTracker.models import Item, Drop, Fleet, FleetType, FleetRestriction
 
 from xml.etree.ElementTree import fromstring
 from xml.parsers.expat import ExpatError
@@ -207,4 +207,30 @@ def fleet_member_icons(request, fleet_id):
     fleet = Fleet.objects.filter(pk=fleet_id).first()
     return render(request, 'lootTracker/member_icons.html', {
         'members': fleet.members.all()
+    })
+
+
+def create_fleet(request):
+    response = {'success': True}
+    pprint(request.POST)
+    fleet_type = FleetType.objects.filter(pk=request.POST['type']).first()
+    fleet = Fleet(
+        name=request.POST['name'],
+        type=fleet_type,
+        corporation=request.user.api.default_character.corporation
+    )
+    if request.POST['restriction']:
+        fleet.restriction = FleetRestriction.objects.filter(pk=request.POST['restriction']).first()
+    if fleet is not None:
+        fleet.save()
+        response['fleet_id'] = fleet.pk
+    else:
+        response['success'] = False
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def load_fleets(request):
+    fleets = Fleet.objects.filter(finalized=False).all()
+    return render(request, 'lootTracker/fleet_list.html', {
+        'fleets': fleets
     })
