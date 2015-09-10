@@ -1,0 +1,14 @@
+{% for fleet in fleets %}
+    <a class="fleet item" data-fleet_id="{{ fleet.pk }}">
+        <i class="ui {{ fleet.type.icon }} icon"></i>
+
+        <div class="content">
+            {{ fleet.name }}&nbsp;
+        </div>
+    </a>
+{% empty %}
+    No fleets currently open.
+{% endfor %}
+<div class="item">
+    <button class="ui primary start fleet button">Start Fleet</button>
+</div>

@@ -1,0 +1,30 @@
+ul.fleet.list
+{
+    margin-top: 0;
+    margin-left: 0;
+}
+
+.fleet.list a.item .content
+{
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.fleet.list a.item i.icon
+{
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.top.attached.row
+{
+    padding-top: 0;
+}
+
+.quantity.input
+{
+    display: block;
+}
+
+.option.icon
+{
+    height: 1em;
+}

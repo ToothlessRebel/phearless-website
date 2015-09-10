@@ -1,3 +1,5 @@
+from lootTracker.models import Item, Drop, Fleet, FleetType, FleetRestriction
+
 from xml.etree.ElementTree import fromstring
 from xml.parsers.expat import ExpatError
 
@@ -5,6 +7,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
+from django.shortcuts import render
 
 from pprint import pprint
 from collections import namedtuple
@@ -13,8 +16,8 @@ import json
 
 from lootTracker.models import Alliance, Character, Corporation
 
-struct = namedtuple("SIZE_SUFFIX", 'ALLIANCE CHARACTER CORPORATION')
-SIZE_SUFFIXES = struct(ALLIANCE='_128.png', CHARACTER='_512.jpg', CORPORATION='_256.png')
+struct = namedtuple("SIZE_SUFFIX", 'ALLIANCE CHARACTER CORPORATION ITEM')
+SIZE_SUFFIXES = struct(ALLIANCE='_128.png', CHARACTER='_512.jpg', CORPORATION='_256.png', ITEM='_64.png')
 
 IMG_SERVER_URL = 'https://image.eveonline.com/'
 
@@ -134,3 +137,100 @@ def parse_api(request):
         response['result'] = 'error'
 
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def item_name_to_id(request, item_name):
+    item_request = requests.get('http://www.fuzzwork.co.uk/api/typeid.php?typename=' + item_name)
+    if item_request.status_code == requests.codes.ok:
+        item = Item.load_from_json(item_request.content.decode('utf-8'))
+        portrait_request = requests.get(IMG_SERVER_URL + '/Type/' + str(item.eve_id) + SIZE_SUFFIXES.ITEM,
+                                        stream=True)
+        if portrait_request.status_code == requests.codes.ok:
+            temp_img = NamedTemporaryFile()
+            for block in portrait_request.iter_content(1024 * 8):
+                if not block:
+                    break  # EOF
+                temp_img.write(block)
+            item.icon.save(str(item.eve_id) + SIZE_SUFFIXES.ITEM, File(temp_img))
+        if item.name != 'bad item':
+            item.save()
+        return HttpResponse(item_request.content, content_type="application/json")
+
+
+def add_drop_to_fleet(request, fleet_id, item_id, quantity):
+    avg_price = 0.0
+    eve_central_response = requests.get('http://api.eve-central.com/api/marketstat?typeid=' + item_id)
+    tree = None
+
+    try:
+        tree = fromstring(eve_central_response.content)
+    except ExpatError:
+        pprint('Failed to parse.')
+
+    if tree is not None:
+        avg_price = tree.find('marketstat/type/buy/avg').text
+    else:
+        pprint('FAILED: tree is None.')
+
+    fleet = Fleet.objects.filter(pk=fleet_id).first()
+    drop = Drop(
+        item=Item.objects.filter(eve_id=item_id).first(),
+        quantity=quantity,
+        fleet=fleet,
+        item_current_value=avg_price
+    ).save()
+
+    response = {
+        'result': True if drop is not None else False
+    }
+
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def load_loot_table(request, fleet_id):
+    fleet_total = 0
+
+    drops = Drop.objects.filter(fleet=fleet_id).all()
+    for drop in drops:
+        drop.total = drop.quantity * drop.item_current_value
+        fleet_total += drop.total
+    corp_tax = float(fleet_total) * 0.05
+
+    return render(request, 'lootTracker/loot_table.html', {
+        'drops': drops,
+        'fleet_total': float(fleet_total) - corp_tax,
+        'corp_tax': corp_tax
+    })
+
+
+def fleet_member_icons(request, fleet_id):
+    fleet = Fleet.objects.filter(pk=fleet_id).first()
+    return render(request, 'lootTracker/member_icons.html', {
+        'members': fleet.members.all()
+    })
+
+
+def create_fleet(request):
+    response = {'success': True}
+    pprint(request.POST)
+    fleet_type = FleetType.objects.filter(pk=request.POST['type']).first()
+    fleet = Fleet(
+        name=request.POST['name'],
+        type=fleet_type,
+        corporation=request.user.api.default_character.corporation
+    )
+    if request.POST['restriction']:
+        fleet.restriction = FleetRestriction.objects.filter(pk=request.POST['restriction']).first()
+    if fleet is not None:
+        fleet.save()
+        response['fleet_id'] = fleet.pk
+    else:
+        response['success'] = False
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def load_fleets(request):
+    fleets = Fleet.objects.filter(finalized=False).all()
+    return render(request, 'lootTracker/fleet_list.html', {
+        'fleets': fleets
+    })

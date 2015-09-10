@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+import json
+
 
 # Create your models here.
 
@@ -8,7 +10,16 @@ from django.contrib.auth.models import User
 class Item(models.Model):
     name = models.CharField(max_length=200)
     eve_id = models.BigIntegerField(unique=True)
-    value = models.BigIntegerField()
+    icon = models.FileField(upload_to='eve/portraits/items')
+
+    @staticmethod
+    def load_from_json(json_string):
+        properties = json.loads(json_string)
+
+        return Item(
+            name=properties['typeName'],
+            eve_id=properties['typeID']
+        )
 
     def __str__(self):
         return self.name
@@ -44,9 +55,31 @@ class Character(models.Model):
         return self.name
 
 
+class FleetType(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+    icon = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+
+class FleetRestriction(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+
 class Fleet(models.Model):
     corporation = models.ForeignKey(Corporation)
     members = models.ManyToManyField(Character)
+    type = models.ForeignKey(FleetType, null=True)
+    finalized = models.BooleanField(default=False)
+    restriction = models.ForeignKey(FleetRestriction, null=True)
+    parent_fleet = models.ForeignKey('self', null=True, blank=True)
+    name = models.CharField(max_length=250, default='')
 
     def __str__(self):
         return 'Fleet ' + str(self.id)
@@ -56,7 +89,7 @@ class Drop(models.Model):
     item = models.ForeignKey(Item)
     fleet = models.ForeignKey(Fleet)
     quantity = models.IntegerField()
-    item_current_value = models.BigIntegerField()
+    item_current_value = models.DecimalField(decimal_places=2, max_digits=50)
 
     def __str__(self):
         return 'Drop ' + str(self.id)

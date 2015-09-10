@@ -16,10 +16,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Api',
             fields=[
-                ('id', models.AutoField(serialize=False, auto_created=True, verbose_name='ID', primary_key=True)),
+                ('id', models.AutoField(primary_key=True, serialize=False, auto_created=True, verbose_name='ID')),
                 ('key', models.CharField(max_length=200)),
                 ('verification_code', models.CharField(max_length=200)),
-                ('default_character', models.OneToOneField(to='lootTracker.Character', null=True)),
+                ('default_character', models.OneToOneField(null=True, to='lootTracker.Character')),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
         ),
