@@ -40,7 +40,8 @@ def parse_api(request):
     try:
         tree = fromstring(api_response)
     except ExpatError:
-        pprint('Failed to parse.')
+        # pprint('Failed to parse.')
+        pass
 
     characters = []
     character_ids = []
@@ -165,12 +166,14 @@ def add_drop_to_fleet(request, fleet_id, item_id, quantity):
     try:
         tree = fromstring(eve_central_response.content)
     except ExpatError:
-        pprint('Failed to parse.')
+        # pprint('Failed to parse.')
+        pass
 
     if tree is not None:
         avg_price = tree.find('marketstat/type/buy/avg').text
     else:
-        pprint('FAILED: tree is None.')
+        # pprint('FAILED: tree is None.')
+        pass
 
     fleet = Fleet.objects.filter(pk=fleet_id).first()
     drop = Drop(
@@ -212,7 +215,6 @@ def fleet_member_icons(request, fleet_id):
 
 def create_fleet(request):
     response = {'success': True}
-    pprint(request.POST)
     fleet_type = FleetType.objects.filter(pk=request.POST['type']).first()
     fleet = Fleet(
         name=request.POST['name'],
