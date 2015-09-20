@@ -1,13 +1,13 @@
 <div class="ui start fleet modal">
+    <input type="hidden" class="default-character" value="{{ request.user.api.default_character.pk }}">
     <div class="header">
         Create a New Fleet
     </div>
     <div class="content">
         <div class="ui relaxed list">
             <div class="item">
-                <div>Members:</div>
                 <div class="ui scrolling fluid multiple search selection character dropdown">
-                    <input type="hidden" name="members" value="{{ request.user.api.default_character.pk }}">
+                    <input type="hidden" name="members" value="">
                     <i class="ui dropdown icon"></i>
 
                     <div class="default text">Select fleet members</div>

@@ -1,3 +1,4 @@
+from pprint import pprint
 from lootTracker.models import Item, Drop, Fleet, FleetType, FleetRestriction
 
 from xml.etree.ElementTree import fromstring
@@ -9,7 +10,6 @@ from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.shortcuts import render
 
-from pprint import pprint
 from collections import namedtuple
 import requests
 import json
@@ -221,9 +221,14 @@ def create_fleet(request):
         type=fleet_type,
         corporation=request.user.api.default_character.corporation
     )
+    member_ids = request.POST['members'].split(',')
     if request.POST['restriction']:
         fleet.restriction = FleetRestriction.objects.filter(pk=request.POST['restriction']).first()
     if fleet is not None:
+        fleet.save()
+        for member_id in member_ids:
+            character = Character.objects.filter(pk=member_id).first()
+            fleet.members.add(character)
         fleet.save()
         response['fleet_id'] = fleet.pk
     else:
@@ -236,3 +241,13 @@ def load_fleets(request):
     return render(request, 'lootTracker/fleet_list.html', {
         'fleets': fleets
     })
+
+
+def finalize_fleet(request, fleet_id):
+    response = {'success': True}
+
+    fleet = Fleet.objects.filter(pk=fleet_id).first()
+    fleet.finalized = True
+    fleet.save()
+
+    return HttpResponse(json.dumps(response), content_type="application/json")

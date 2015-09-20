@@ -7,16 +7,21 @@ $(function () {
     var $item_dropdown = $('.item.dropdown');
     var lookup_fired = false;
     var $quantity_input = $('.quantity.input');
+    var $members_row = $('.loadable.members.row');
+    var fleet_id = null;
+    var $loot_table = $('.loadable.loot');
     loadFleets();
 
     $('.dropdown').dropdown();
 
+    var selection = $('.default-character').val();
     $item_dropdown.dropdown({
         allowAdditions: true,
         onNoResults: function (searched_for) {
             item_not_found = searched_for;
         }
     });
+    $('.character.dropdown').dropdown('set selected', selection);
 
     $item_dropdown.on('change', function () {
         if (item_not_found.length > 0 && !lookup_fired) {
@@ -66,7 +71,7 @@ $(function () {
 
     $('.link.fleet.list').on('click', '.fleet.item', function () {
         var $this = $(this);
-        var fleet_id = $this.data('fleet_id');
+        fleet_id = $this.data('fleet_id');
 
         $this.closest('.list').find('.green.check.icon').remove();
         $this.append('<i class="ui green check icon"></i>');
@@ -74,7 +79,7 @@ $(function () {
         $.ajax({
             url: '/ajax/fleet_member_icons/' + fleet_id
         }).success(function (response) {
-            $('.loadable.members.row').html(response);
+            $members_row.html(response);
             loadLootTable(fleet_id);
         }).fail(function (response) {
             console.log('Something went wrong! ' + response);
@@ -90,18 +95,27 @@ $(function () {
         $('.start.fleet.modal').modal('show');
     });
 
-    $('.loadable.loot').on('click', '.finalize.fleet.button', function () {
-        console.log('Saving fleet.');
+    $loot_table.on('click', '.finalize.fleet.button', function () {
+        console.log('Saving fleet ' + fleet_id + '.');
+        $.ajax({
+            url: '/ajax/finalize_fleet/' + fleet_id
+        }).fail(function (response) {
+            console.log('Something went wrong!', response);
+        });
+        $members_row.empty();
+        $loot_table.empty();
+        loadFleets();
     });
 
     function loadLootTable(fleet_id) {
+        fleet_id = fleet_id || 0;
         $.ajax({
             url: '/ajax/load_loot_table/' + fleet_id
         }).success(function (response) {
             // Load new table
-            $('.loadable.loot').html(response);
+            $loot_table.html(response);
         }).fail(function (response) {
-            console.log('Something went wrong! ' + response);
+            console.log('Something went wrong!', response);
         });
     }
 
@@ -123,14 +137,12 @@ $(function () {
     function createAndSelectFleet(event) {
         var $modal = $(event).closest('.modal');
         var $modal_content = $modal.find('.content');
-        console.log('Modal content:', $modal_content);
         var members = $modal_content.find('.character.dropdown').dropdown('get value');
         var $name_input = $modal_content.find('.name.input');
         var name = $name_input.val();
         if (! name.length > 0) {
             name = $name_input.find('input').attr('placeholder');
         }
-        console.log('Name: ', name);
         var type = $modal_content.find('.type.dropdown').dropdown('get value');
         var restriction = $modal_content.find('.restriction.dropdown').dropdown('get value');
         $.ajax({
