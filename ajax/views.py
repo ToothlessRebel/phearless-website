@@ -241,3 +241,13 @@ def load_fleets(request):
     return render(request, 'lootTracker/fleet_list.html', {
         'fleets': fleets
     })
+
+
+def finalize_fleet(request, fleet_id):
+    response = {'success': True}
+
+    fleet = Fleet.objects.filter(pk=fleet_id).first()
+    fleet.finalized = True
+    fleet.save()
+
+    return HttpResponse(json.dumps(response), content_type="application/json")
