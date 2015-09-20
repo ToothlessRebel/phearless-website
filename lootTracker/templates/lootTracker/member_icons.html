@@ -2,7 +2,7 @@
 <div class="member column">
     <div class="ui mini rounded spaced images">
         {% for member in members|slice:":10" %}
-            <img class="ui image" src="{{ member.portrait.url }}">
+            <img class="ui member image" src="{{ member.portrait.url }}">
         {% endfor %}
         {% if members|length > 10 %}
             <div class="ui image">
@@ -10,7 +10,22 @@
             </div>
         {% endif %}
         <div class="ui image">
-            <i class="ui huge green add square icon"></i>
+            <div class="ui icon add member top left pointing dropdown">
+                <i class="ui huge green add member square icon"></i>
+
+                <div class="menu">
+                    <div class="ui icon search input">
+                        <i class="search icon"></i>
+                        <input type="text" placeholder="Search">
+                    </div>
+                    {% for character in characters %}
+                        <div class="item" data-value="{{ character.pk }}">
+                            <img class="ui image" src="{{ character.portrait.url }}">
+                            {{ character.name }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 </div>

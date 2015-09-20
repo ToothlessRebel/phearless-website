@@ -54,7 +54,7 @@ $(function () {
             var quantity = $quantity_input.find('input').val();
             var fleet = $('input[name="fleet"]').val();
             $.ajax({
-                url: '/ajax/add_drop_to_fleet/' + fleet + '/' + item + '/' + quantity
+                url: '/ajax/fleet/' + fleet + '/add_drop/' + item + '/' + quantity
             }).always(function () {
                 $row.dimmer('hide')
             }).success(function () {
@@ -76,14 +76,7 @@ $(function () {
         $this.closest('.list').find('.green.check.icon').remove();
         $this.append('<i class="ui green check icon"></i>');
         $('input[name="fleet"]').val(fleet_id);
-        $.ajax({
-            url: '/ajax/fleet_member_icons/' + fleet_id
-        }).success(function (response) {
-            $members_row.html(response);
-            loadLootTable(fleet_id);
-        }).fail(function (response) {
-            console.log('Something went wrong! ' + response);
-        });
+        loadMembers();
     });
 
     $('.start.fleet.modal').modal({
@@ -98,7 +91,7 @@ $(function () {
     $loot_table.on('click', '.finalize.fleet.button', function () {
         console.log('Saving fleet ' + fleet_id + '.');
         $.ajax({
-            url: '/ajax/finalize_fleet/' + fleet_id
+            url: '/ajax/fleet/' + fleet_id + '/finalize'
         }).fail(function (response) {
             console.log('Something went wrong!', response);
         });
@@ -110,7 +103,7 @@ $(function () {
     function loadLootTable(fleet_id) {
         fleet_id = fleet_id || 0;
         $.ajax({
-            url: '/ajax/load_loot_table/' + fleet_id
+            url: '/ajax/fleet/' + fleet_id + '/loot_table'
         }).success(function (response) {
             // Load new table
             $loot_table.html(response);
@@ -122,7 +115,7 @@ $(function () {
     function loadFleets(click_target) {
         click_target = click_target || null;
         $.ajax({
-            url: '/ajax/load_fleets'
+            url: '/ajax/fleets'
         }).success(function (response) {
             // Load the fleet list
             $('.loadable.fleet.list').html(response);
@@ -146,7 +139,7 @@ $(function () {
         var type = $modal_content.find('.type.dropdown').dropdown('get value');
         var restriction = $modal_content.find('.restriction.dropdown').dropdown('get value');
         $.ajax({
-            url: '/ajax/create_fleet',
+            url: '/ajax/fleets/create',
             method: 'POST',
             dataType: 'json',
             data: {
@@ -160,5 +153,23 @@ $(function () {
         }).fail(function (response) {
             console.log('Something went wrong!', response)
         });
+    }
+
+    function loadMembers() {
+        $.ajax({
+            url: '/ajax/fleet/' + fleet_id + '/member_icons'
+        }).success(function (response) {
+            $members_row.html(response);
+            $('.add.member.dropdown').closest('.dropdown').dropdown({
+                onChange: addMember
+            });
+            loadLootTable(fleet_id);
+        }).fail(function (response) {
+            console.log('Something went wrong!', response);
+        });
+    }
+
+    function addMember(member_id) {
+        console.log('Adding ' + member_id + ' to fleet.');
     }
 });

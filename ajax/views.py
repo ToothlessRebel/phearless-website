@@ -209,7 +209,8 @@ def load_loot_table(request, fleet_id):
 def fleet_member_icons(request, fleet_id):
     fleet = Fleet.objects.filter(pk=fleet_id).first()
     return render(request, 'lootTracker/member_icons.html', {
-        'members': fleet.members.all()
+        'members': fleet.members.all(),
+        'characters': Character.objects.exclude(id__in=fleet.members.all())
     })
 
 
