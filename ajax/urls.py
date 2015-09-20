@@ -12,4 +12,6 @@ urlpatterns = [
     url(r'^fleet/(?P<fleet_id>\d+?)/member_icons/?$', views.fleet_member_icons),
     url(r'^fleet/(?P<fleet_id>\d+?)/loot_table/?$', views.load_loot_table),
     url(r'^fleet/(?P<fleet_id>\d+?)/finalize/?$', views.finalize_fleet),
+    url(r'^fleet/(?P<fleet_id>\d+?)/add_member/(?P<character_id>\d+?)/?$', views.add_member_to_fleet),
+    url(r'^fleet/(?P<fleet_id>\d+?)/remove_member/(?P<character_id>\d+?)/?$', views.remove_member_from_fleet),
 ]

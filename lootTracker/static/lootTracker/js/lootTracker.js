@@ -171,5 +171,13 @@ $(function () {
 
     function addMember(member_id) {
         console.log('Adding ' + member_id + ' to fleet.');
+        $.ajax({
+            url: '/ajax/fleet/' + fleet_id + '/add_member/' + member_id
+        }).success(function (response) {
+            console.log(response);
+            loadFleets(response.fleet_id);
+        }).fail(function (response) {
+            console.log('Something went wrong!', response)
+        });
     }
 });

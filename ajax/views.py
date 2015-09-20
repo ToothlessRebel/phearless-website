@@ -252,3 +252,23 @@ def finalize_fleet(request, fleet_id):
     fleet.save()
 
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def add_member_to_fleet(request, fleet_id, character_id):
+    original_fleet = Fleet.objects.filter(pk=fleet_id).first()
+    fleet = original_fleet.spawn_child()
+    character = Character.objects.filter(pk=character_id).first()
+
+    fleet.members.add(character)
+    fleet.save()
+
+    response = {
+        'success': True,
+        'fleet_id': fleet.pk
+    }
+
+    return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+def remove_member_from_fleet(request, fleet_id, character_id):
+    pass

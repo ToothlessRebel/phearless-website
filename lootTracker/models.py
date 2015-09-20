@@ -1,3 +1,4 @@
+from pprint import pprint
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -82,7 +83,19 @@ class Fleet(models.Model):
     name = models.CharField(max_length=250, default='')
 
     def __str__(self):
-        return 'Fleet ' + str(self.id)
+        return self.name + ': (' + str(self.id) + ')'
+
+    def spawn_child(self):
+        original_fleet = Fleet.objects.filter(pk=self.pk).first()
+        original_fleet.finalized = True
+        original_fleet.save()
+        new_fleet = self
+        new_fleet.parent_fleet = original_fleet
+        new_fleet.pk = None
+        new_fleet.save()
+        new_fleet.members = original_fleet.members.all()
+
+        return new_fleet
 
 
 class Drop(models.Model):
