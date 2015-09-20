@@ -11,12 +11,14 @@ $(function () {
 
     $('.dropdown').dropdown();
 
+    var selection = $('.default-character').val();
     $item_dropdown.dropdown({
         allowAdditions: true,
         onNoResults: function (searched_for) {
             item_not_found = searched_for;
         }
     });
+    $('.character.dropdown').dropdown('set selected', selection);
 
     $item_dropdown.on('change', function () {
         if (item_not_found.length > 0 && !lookup_fired) {
@@ -123,14 +125,12 @@ $(function () {
     function createAndSelectFleet(event) {
         var $modal = $(event).closest('.modal');
         var $modal_content = $modal.find('.content');
-        console.log('Modal content:', $modal_content);
         var members = $modal_content.find('.character.dropdown').dropdown('get value');
         var $name_input = $modal_content.find('.name.input');
         var name = $name_input.val();
         if (! name.length > 0) {
             name = $name_input.find('input').attr('placeholder');
         }
-        console.log('Name: ', name);
         var type = $modal_content.find('.type.dropdown').dropdown('get value');
         var restriction = $modal_content.find('.restriction.dropdown').dropdown('get value');
         $.ajax({
